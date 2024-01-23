@@ -1,4 +1,4 @@
--- In this assignment, you'll be building the domain model, database 
+In this assignment, you'll be building the domain model, database 
 -- structure, and data for "KMDB" (the Kellogg Movie Database).
 -- The end product will be a report that prints the movies and the 
 -- top-billed cast for each movie in the database.
@@ -106,12 +106,109 @@
 -- Drop existing tables, so you'll start fresh each time this script is run.
 -- TODO!
 
+DROP TABLE IF EXISTS movies;
+DROP TABLE IF EXISTS studios;
+DROP TABLE IF EXISTS actors;
+DROP TABLE IF EXISTS movie_cast;
+
 -- Create new tables, according to your domain model
 -- TODO!
+
+CREATE TABLE IF NOT EXISTS movies (
+    movie_id INTER PRIMARY KEY,
+    title TEXT,
+    year_released INTEGER,
+    mpaa_rating TEXT,
+    studio_id INTEGER,
+    FOREIGN KEY (studio_id) REFERENCES studios(studio_id)
+);
+
+CREATE TABLE IF NOT EXISTS studios (
+    studio_id INTEGER PRIMARY KEY,
+    name TEXT
+);
+
+
+CREATE TABLE IF NOT EXISTS actors (
+    actor_id INTEGER PRIMARY KEY,
+    name TEXT
+);
+
+
+CREATE TABLE IF NOT EXISTS movie_cast (
+    movie_id INTEGER,
+    actor_id INTEGER,
+    character_name TEXT,
+    FOREIGN KEY (movie_id) REFERENCES movies(movie_id),
+    FOREIGN KEY (actor_id) REFERENCES actors(actor_id)
+);
+
 
 -- Insert data into your database that reflects the sample data shown above
 -- Use hard-coded foreign key IDs when necessary
 -- TODO!
+
+INSERT INTO studios (name) VALUES ('Warner Bros.');
+
+INSERT INTO movies (movie_id, title, year_released, mpaa_rating, studio_id)
+VALUES (1, 'Batmin Begins', 2005, 'PG-13',1);
+
+INSERT INTO movies (movie_id, title, year_released, mpaa_rating, studio_id)
+VALUES (2, 'The Dark Knight', 2008, 'PG-13',1);
+
+INSERT INTO movies (movie_id, title, year_released, mpaa_rating, studio_id)
+VALUES (3, 'The Dark Knight Rises', 2013, 'PG-13',1);
+
+INSERT INTO actors (name) VALUES ('Christian Bale');
+INSERT INTO actors (name) VALUES ('Michael Caine');
+INSERT INTO actors (name) VALUES ('Liam Neeson');
+INSERT INTO actors (name) VALUES ('Katie Holmes');
+INSERT INTO actors (name) VALUES ('Gary Oldman');
+INSERT INTO actors (name) VALUES ('Heath Ledger');
+INSERT INTO actors (name) VALUES ('Aaron Eckhart');
+INSERT INTO actors (name) VALUES ('Maggie Gyllenhaal');
+INSERT INTO actors (name) VALUES ('Tom Hardy');
+INSERT INTO actors (name) VALUES ('Joseph Gordon-Levitt');
+INSERT INTO actors (name) VALUES ('Anne Hathaway');
+
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (1,1, 'Bruce Wayne');
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (1,2, 'Alfred');
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (1,3, 'Ra''s Al Ghul');
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (1,4, 'Rachel Dawes');
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (1,5, 'Comissioner Gordon');
+
+
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (2,1, 'Bruce Wayne');
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (2,6, 'Joker');
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (2,7, 'Harvey Dent');
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (2,2, 'Alfred');
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (2,8, 'Rachel Dawes');
+
+
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (3,1, 'Bruce Wayne');
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (3,5, 'Commissioner Gordon');
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (3,9, 'Bane');
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (3,10, 'John Blake');
+INSERT INTO movie_cast (movie_id, actor_id, character_name)
+VALUES (3,11, 'Selina Kyle');
+
+
+
+
 
 -- Prints a header for the movies output
 .print "Movies"
@@ -120,6 +217,12 @@
 
 -- The SQL statement for the movies output
 -- TODO!
+
+SELECT title, year_released, mpaa_rating, studios.name
+FROM movies 
+JOIN studios ON movies.studio_id = studios.studio_id;
+
+
 
 -- Prints a header for the cast output
 .print ""
@@ -130,3 +233,8 @@
 
 -- The SQL statement for the cast output
 -- TODO!
+
+SELECT movies.title, actors.name, movie_cast.character_name
+FROM movies
+JOIN movie_cast ON movies.movie_id = movie_cast.movie_id
+JOIN actors ON movie_cast.actor_id = actors.actor_id;
